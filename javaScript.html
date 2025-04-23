@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sumar y Multiplicar Matrices con TensorFlow.js</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+
+</head>
+<body>
+    <h2>Sumar y Multiplicar Matrices TensorFlow.js</h2>
+
+    <label for="filas">Cantidad de filas:</label>
+    <input type="number" id="filas" min="1" placeholder="Filas" required>
+    <br><br>
+    
+    <label for="columnas">Cantidad de columnas:</label>
+    <input type="number" id="columnas" min="1" placeholder="Columnas" required>
+    <br><br>
+
+    <button onclick="generarMatrices()">Generar y Operar Matrices</button>
+
+    <h3>Resultado:</h3>
+    <pre id="resultado"></pre>
+
+    <script>
+        async function generarMatrices() {
+            // Obtener las dimensiones desde los inputs
+            const filas = parseInt(document.getElementById("filas").value);
+            const columnas = parseInt(document.getElementById("columnas").value);
+
+            // Validar que las entradas sean números válidos
+            if (isNaN(filas) || isNaN(columnas) || filas <= 0 || columnas <= 0) {
+                alert("Por favor ingresa valores válidos para las dimensiones.");
+                return;
+            }
+
+            // Generar matrices aleatorias usando TensorFlow.js
+            const matriz1 = tf.randomUniform([filas, columnas], 1, 21, 'int32'); // Entre 1 y 20
+            const matriz2 = tf.randomUniform([filas, columnas], 1, 21, 'int32'); // Entre 1 y 20
+
+            // Mostrar las matrices generadas en consola
+            console.log("Matriz 1:");
+            matriz1.print();
+
+            console.log("Matriz 2:");
+            matriz2.print();
+
+            // Mostrar las matrices generadas en la página
+            const matriz1Array = await matriz1.array();
+            const matriz2Array = await matriz2.array();
+            document.getElementById("resultado").textContent = `Matriz 1:\n${JSON.stringify(matriz1Array, null, 2)}\n\nMatriz 2:\n${JSON.stringify(matriz2Array, null, 2)}\n\n`;
+
+            // Sumar las matrices con TensorFlow.js
+            const suma = tf.add(matriz1, matriz2);
+
+            // Multiplicar las matrices con TensorFlow.js
+            const multiplicacion = tf.matMul(matriz1, matriz2.transpose()); // Transponemos para que la multiplicación sea válida
+
+            // Mostrar el resultado de la suma
+            const resultadoSuma = await suma.array();
+            document.getElementById("resultado").textContent += `Resultado de la Suma:\n${JSON.stringify(resultadoSuma, null, 2)}\n\n`;
+
+            // Mostrar el resultado de la multiplicación
+            const resultadoMultiplicacion = await multiplicacion.array();
+            document.getElementById("resultado").textContent += `Resultado de la Multiplicación:\n${JSON.stringify(resultadoMultiplicacion, null, 2)}\n`;
+        }
+    </script>
+</body>
+</html>
